@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-gradient-to-br from-gray-50 to-blue-50">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmaManager - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="h-full" x-data="{ sidebarOpen: true }">
+  <!-- Sidebar -->
+  <div class="fixed inset-y-0 z-40 w-64 bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
+       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+    <div class="p-6 border-b border-blue-700">
+      <h1 class="text-2xl font-bold text-white flex items-center">
+        <i class="fas fa-clinic-medical mr-3"></i>PharmaManager
+      </h1>
+    </div>
+    <nav class="p-4 space-y-2">
+      <a href="/" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+        <i class="fas fa-chart-pie mr-3"></i> Dashboard
+      </a>
+      <a href="/products" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+        <i class="fas fa-pills mr-3"></i> Produits
+      </a>
+      <a href="/sales" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+        <i class="fas fa-receipt mr-3"></i> Ventes
+      </a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="h-full flex flex-col transition-all duration-300" :class="sidebarOpen ? 'ml-64' : 'ml-0'">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+      <div class="flex items-center justify-between px-6 py-4">
+        <button @click="sidebarOpen = !sidebarOpen" class="text-blue-600 hover:text-blue-800">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+        <div class="flex items-center space-x-4">
+          
+          <div class="flex items-center space-x-2">
+            
+            <span class="text-gray-700 font-medium p-3 pt-2 text-white font-bold text-center bg-blue-600 w-10 h-10 rounded-[50%] ">{{(auth.user?.fullName).charAt(0)}} </span>
+                
+            <span class="text-gray-700 font-medium">{{auth.user?.fullName}} </span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Carte Statistique 1 -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-600">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-gray-800 mb-2">Stock Total</h2>
+              <div class="text-4xl font-bold text-blue-600">
+                {{ totalStock }}
+              </div>
+            </div>
+            <i class="fas fa-capsules text-4xl text-blue-100"></i>
+          </div>
+        </div>
+
+        <!-- Carte Statistique 2 -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-green-600">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-gray-800 mb-2">Ventes du Mois</h2>
+              <div class="text-4xl font-bold text-green-600">
+                {{ venteMois}} Fc
+              </div>
+            </div>
+            <i class="fas fa-chart-line text-4xl text-green-100"></i>
+          </div>
+        </div>
+
+        <!-- Carte Statistique 3 -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-purple-600">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-gray-800 mb-2">Alertes Actives</h2>
+              <div class="text-4xl font-bold text-purple-600">
+                {{ Alerte }}
+              </div>
+            </div>
+            <a href="/products/alerts">
+            <i class="fas fa-exclamation-triangle text-4xl text-purple-100"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Graphique Principal -->
+      <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-6">Évolution des Ventes</h2>
+        <div class="h-96">
+          <canvas id="salesChart" height="300"></canvas>
+        </div>
+      </div>
+
+      <!-- Dernières Ventes -->
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="p-6 border-b border-gray-100">
+          <h2 class="text-xl font-bold text-gray-800">Transactions Récentes</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-blue-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-600 uppercase">Produit</th>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-600 uppercase">Quantité</th>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-600 uppercase">Prix</th>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-600 uppercase">Date</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              @each(sale in sales)
+              <tr class="hover:bg-blue-50 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-pills text-blue-600"></i>
+                    </div>
+                    <div class="ml-4">
+                      <div class="font-medium text-gray-800">{{ sale.product.name }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">{{ sale.quantitySold }}</td>
+                <td class="px-6 py-4 font-medium">{{ sale.totalPrice }} Fc</td>
+                <td class="px-6 py-4">{{ sale.createdAt.toFormat('dd/MM/yyyy HH:mm') }}</td>
+              </tr>
+              @endeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+    <!-- Footer avec déconnexion -->
+<footer class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6 mt-10">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <!-- Logo et copyright -->
+      <div class="mb-4 md:mb-0">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-clinic-medical text-2xl"></i>
+          <span class="text-xl font-bold">PharmaManager</span>
+        </div>
+        <p class="text-blue-100 text-sm mt-1">© 2023 Tous droits réservés</p>
+      </div>
+
+      <!-- Liens de navigation -->
+      <div class="flex flex-wrap justify-center gap-6">
+        <a href="/dashboard" class="hover:text-blue-200 transition-colors">
+          <i class="fas fa-chart-pie mr-2"></i> Dashboard
+        </a>
+        <a href="/products" class="hover:text-blue-200 transition-colors">
+          <i class="fas fa-pills mr-2"></i> Produits
+        </a>
+        <a href="/sales" class="hover:text-blue-200 transition-colors">
+          <i class="fas fa-receipt mr-2"></i> Ventes
+        </a>
+      </div>
+
+      <!-- Bouton de déconnexion -->
+      <form method="GET" action="/deconnect" class="mt-4 md:mt-0">
+        <button type="submit" class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
+          <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+        </button>
+      </form>
+    </div>
+  </div>
+</footer>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Récupération correcte des données
+      const chartData = @json({{chartData}})
+      
+      console.log('Données du graphique:', chartData) // Vérification
+
+      if (!chartData || !chartData.labels || !chartData.values) {
+        console.error('Structure de données invalide')
+        return
+      }
+
+      const ctx = document.getElementById('salesChart')
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+            label: 'Ventes (Fc)',
+            data: chartData.values,
+            backgroundColor: 'rgba(59, 130, 246, 0.7)'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      })
+    })
+  </script>
+</body>

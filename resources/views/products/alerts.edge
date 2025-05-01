@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-gray-50">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmaManager - Alertes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="h-full" x-data="{ sidebarOpen: true }">
+  <!-- Structure header/sidebar similaire -->
+  <div class="fixed inset-y-0 z-40 w-64 bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
+       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+<div class="p-6 border-b border-blue-700">
+ <h1 class="text-2xl font-bold text-white flex items-center">
+   <i class="fas fa-clinic-medical mr-3"></i>PharmaManager
+ </h1>
+</div>
+<nav class="p-4 space-y-2">
+ <a href="/" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+   <i class="fas fa-chart-pie mr-3"></i> Dashboard
+ </a>
+ <a href="/products" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+   <i class="fas fa-pills mr-3"></i> Produits
+ </a>
+ <a href="/sales" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+   <i class="fas fa-receipt mr-3"></i> Ventes
+ </a>
+</nav>
+</div>
+<div class="h-full flex flex-col transition-all duration-300" :class="sidebarOpen ? 'ml-64' : 'ml-0'">
+
+  
+  <header class="bg-white shadow-sm">
+    <div class="flex items-center justify-between px-6 py-4">
+      <button @click="sidebarOpen = !sidebarOpen" class="text-blue-600 hover:text-blue-800">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+      <div class="flex items-center space-x-4">
+        
+        <div class="flex items-center space-x-2">
+          
+          <span class="text-gray-700 font-medium p-3 pt-2 text-white font-bold text-center bg-blue-600 w-10 h-10 rounded-[50%] ">{{(auth.user?.fullName).charAt(0)}} </span>
+              
+          <span class="text-gray-700 font-medium">{{auth.user?.fullName}} </span>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main class="flex-1 p-6">
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+      <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+        <i class="fas fa-exclamation-triangle mr-3 text-red-600"></i>Alertes Produits
+      </h1>
+    </div>
+
+    <!-- Alertes Expiration -->
+    <div class="bg-white rounded-2xl shadow-xl mb-8">
+      <div class="p-6 border-b border-gray-100">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+          <i class="fas fa-clock text-red-500 mr-2"></i>Produits Expirés
+          <span class="ml-2 bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+            {{ Expire }}
+          </span>
+        </h2>
+      </div>
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @each(product in PRODUCTS)
+        <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-600">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="font-bold text-red-800">{{ product.name }}</h3>
+              <p class="text-sm text-red-600">Expiré depuis {{ product.expirationDate.diffNow('days').days * -1 }} jours</p>
+              <div class="mt-2">
+                <p class="text-gray-600">Stock restant: {{ product.quantity }}</p>
+                <p class="text-gray-600">Code: {{ product.code }}</p>
+              </div>
+            </div>
+            <form action="{{ route('products.destroy', [product.id]) }}" method="POST">
+              @csrf
+              <input type="hidden" name="_method" value="DELETE">
+              <button type="submit" class="text-red-600 hover:text-red-800">
+                <i class="fas fa-trash"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+        @endeach
+      </div>
+    </div>
+
+    <!-- Alertes Stock Faible -->
+    <div class="bg-white rounded-2xl shadow-xl">
+      <div class="p-6 border-b border-gray-100">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+          <i class="fas fa-box-open text-orange-500 mr-2"></i>Stock Critique
+          <span class="ml-2 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
+            {{ Critique }}
+          </span>
+        </h2>
+      </div>
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @each(product in PRODUCT)
+        <div class="bg-orange-50 p-4 rounded-xl border-l-4 border-orange-600">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="font-bold text-orange-800">{{ product.name }}</h3>
+              <p class="text-sm text-orange-600">Stock restant: {{ product.quantity }}</p>
+              <div class="mt-2">
+                <p class="text-gray-600">Seuil d'alerte: {{ product.alertThreshold || 'Non défini' }}</p>
+                <p class="text-gray-600">Code: {{ product.code }}</p>
+              </div>
+            </div>
+            <a href="{{ route('products.edit', [product.id]) }}" 
+               class="text-orange-600 hover:text-orange-800">
+              <i class="fas fa-edit"></i>
+            </a>
+          </div>
+        </div>
+        @endeach
+      </div>
+    </div>
+  </main>
+  <!-- Footer avec déconnexion -->
+<footer class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6 mt-10">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <!-- Logo et copyright -->
+      <div class="mb-4 md:mb-0">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-clinic-medical text-2xl"></i>
+          <span class="text-xl font-bold">PharmaManager</span>
+        </div>
+        <p class="text-blue-100 text-sm mt-1">© 2023 Tous droits réservés</p>
+      </div>
+
+      <!-- Liens de navigation -->
+      <div class="flex flex-wrap justify-center gap-6">
+        <a href="/dashboard" class="hover:text-blue-200 transition-colors">
+          <i class="fas fa-chart-pie mr-2"></i> Dashboard
+        </a>
+        <a href="/products" class="hover:text-blue-200 transition-colors">
+          <i class="fas fa-pills mr-2"></i> Produits
+        </a>
+        <a href="/sales" class="hover:text-blue-200 transition-colors">
+          <i class="fas fa-receipt mr-2"></i> Ventes
+        </a>
+      </div>
+
+      <!-- Bouton de déconnexion -->
+      <form method="GET" action="/deconnect" class="mt-4 md:mt-0">
+        <button type="submit" class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
+          <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+        </button>
+      </form>
+    </div>
+  </div>
+</footer>
+</div>
+</body>
+</html>

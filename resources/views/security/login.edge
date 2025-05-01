@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Connecion</title>
+    <link rel="preconnect" href="https://fonts.bunny.net" />
+    <link
+      href="https://fonts.bunny.net/css?family=instrument-sans:400,400i,500,500i,600,600i,700,700i"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sand-1: #fdfdfc;
+        --sand-2: #f9f9f8;
+        --sand-3: #f1f0ef;
+        --sand-4: #e9e8e6;
+        --sand-5: #e2e1de;
+        --sand-6: #dad9d6;
+        --sand-7: #cfceca;
+        --sand-8: #bcbbb5;
+        --sand-9: #8d8d86;
+        --sand-10: #82827c;
+        --sand-11: #63635e;
+        --sand-12: #21201c;
+      }
+    </style>
+
+    <script src="https://cdn.tailwindcss.com">
+      
+    </script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: [ "Instrument Sans", "sans-serif" ]
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#5A45FF",
+                lighter: "#a599ff"
+              },
+              sand: {
+                1: "var(--sand-1)",
+                2: "var(--sand-2)",
+                3: "var(--sand-3)",
+                4: "var(--sand-4)",
+                5: "var(--sand-5)",
+                6: "var(--sand-6)",
+                7: "var(--sand-7)",
+                8: "var(--sand-8)",
+                9: "var(--sand-9)",
+                10: "var(--sand-10)",
+                11: "var(--sand-11)",
+                12: "var(--sand-12)"
+              }
+            }
+          }
+        }
+      };
+    </script>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('dumper')
+  </head>
+<body class="bg-gradient-to-b from-blue-800 to-blue-900 min-h-screen flex items-center justify-center p-5">
+    <div class="w-full max-w-md bg-white shadow-2xl overflow-hidden">
+        <div class="p-8">
+            <div class="text-center mb-8">
+                <div class="text-primary-500 text-5xl mb-2">
+                    <i class="fas fa-link"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800">PharmaManager</h1>
+            </div>
+            
+            <h2 class="text-xl font-semibold text-gray-700 text-center mb-6">Connectez-vous à votre compte</h2>
+            
+            <form class="space-y-5" action="/connexion" method="GET">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <input type="email" name="email" placeholder="Adresse email" required 
+                           class="w-full pl-5 pr-4 py-3 border border-gray-300  focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition">
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <input type="text" name="password" placeholder="Mot de passe" required
+                           class="w-full pl-5 pr-10 py-3 border border-gray-300  focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition">
+                    <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                
+                <div class="flex items-center">
+                    <a href="/forgotview" class="text-sm text-primary-500 hover:text-primary-600 hover:underline">Mot de passe oublié ?</a>
+                </div>
+                
+                <button type="submit" class="w-full text-primary border border-primary hover:bg-primary hover:text-white py-3 px-4 rounded-lg font-medium hover:opacity-90 transition shadow-md hover:shadow-lg">
+                    Se connecter
+                </button>
+                
+                
+                
+                <p class="text-center text-sm text-gray-600">
+                    <a href="/signin" class="text-primary-500 font-medium hover:text-primary-600 hover:underline">Créer un compte</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
