@@ -11,10 +11,13 @@
 <body class="h-full">
   <main class="flex-1 p-6">
     <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8">
-      <div class="border-b border-gray-200 pb-6 mb-8">
+      <div class="flex justify-between border-b border-gray-200 pb-6 mb-8">
         <h1 class="text-2xl font-bold text-gray-800 flex items-center">
           <i class="fas fa-cart-plus mr-3 text-blue-600"></i>Nouvelle Transaction
         </h1>
+        <a href="/sales" class="text-blue-600 hover:text-blue-800">
+          ← Retour à la liste
+        </a>
       </div>
 
       <form method="POST" action="{{ route('sales.store') }}" class="space-y-6">
