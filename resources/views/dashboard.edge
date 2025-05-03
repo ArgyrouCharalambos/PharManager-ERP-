@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body class="h-full" x-data="{ sidebarOpen: true }">
   <!-- Sidebar -->
@@ -96,14 +98,50 @@
         </div>
       </div>
 
-      <!-- Graphique Principal -->
-      <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
-        <h2 class="text-xl font-bold text-gray-800 mb-6">Évolution des Ventes</h2>
-        <div class="h-96">
-          <canvas id="salesChart" height="300"></canvas>
-        </div>
+      <div class="bg-white p-6 rounded-xl shadow-xl">
+        <h2 class="text-lg font-semibold mb-4">5 Dernières Ventes</h2>
+        <canvas id="salesChart" height="100"></canvas>
       </div>
-
+      
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        const salesData = [
+          @each(sale in saleS)
+            {
+              date: "{{ sale.date }}",
+              amount: {{ sale.amount }}
+            },
+          @endeach
+        ];
+      
+        const labels = salesData.map(s => s.date);
+        const data = salesData.map(s => s.amount);
+      
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Montant des ventes (Fc)',
+              data: data,
+              backgroundColor: 'rgba(75, 192, 192, 0.6)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { stepSize: 100 }
+              }
+            }
+          }
+        });
+      </script>
+      
       <!-- Dernières Ventes -->
       <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
         <div class="p-6 border-b border-gray-100">
@@ -179,39 +217,7 @@
   </div>
 </footer>
   </div>
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Récupération correcte des données
-      const chartData = @json({{chartData}})
-      
-      console.log('Données du graphique:', chartData) // Vérification
-
-      if (!chartData || !chartData.labels || !chartData.values) {
-        console.error('Structure de données invalide')
-        return
-      }
-
-      const ctx = document.getElementById('salesChart')
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: chartData.labels,
-          datasets: [{
-            label: 'Ventes (Fc)',
-            data: chartData.values,
-            backgroundColor: 'rgba(59, 130, 246, 0.7)'
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      })
-    })
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
+</html>
