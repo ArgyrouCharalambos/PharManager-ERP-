@@ -134,7 +134,8 @@
                 </td>
                 <td class="px-6 py-4">{{ sale.quantitySold }}</td>
                 <td class="px-6 py-4 font-medium">{{ sale.totalPrice }} Fc</td>
-                <td class="px-6 py-4">{{ sale.createdAt.toFormat('dd/MM/yyyy HH:mm') }}</td>
+                
+                <td class="px-6 py-4">{{ sale.createdAt.plus({ hours: 2 }).toFormat('dd/MM/yyyy HH:mm') }}</td>
               </tr>
               @endeach
             </tbody>
