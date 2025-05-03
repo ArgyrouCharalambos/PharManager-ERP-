@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modifier Produit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-2xl mx-auto p-6">
+    <div class="bg-white shadow rounded-lg p-6">
+      <!-- En-tête -->
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Modifier le Produit</h1>
+        <a href="/products" class="text-blue-600 hover:text-blue-800">
+          ← Retour à la liste
+        </a>
+      </div>
+
+      <!-- Formulaire -->
+      <form method="POST" action="/products/update/{{product.id}}" class="space-y-6">
+        <!-- Champ Nom -->
+        {{ csrfField() }}
+
+        <div>
+          <label for="nom" class="block text-sm font-medium text-gray-700">Nom du Produit</label>
+          <input 
+            type="text" 
+            id="nom" 
+            name="name" 
+            value="{{ product.name}}"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+            required
+          >
+        </div>
+
+        <!-- Champ Quantité -->
+        <div>
+          <label for="quantite" class="block text-sm font-medium text-gray-700">Quantité en Stock</label>
+          <input 
+            type="number" 
+            id="quantite" 
+            name="quantity" 
+            value="{{ product.quantity }}"
+            min="0"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+            required
+          >
+        </div>
+
+        <!-- Champ Prix de Vente -->
+        <div>
+          <label for="prixVente" class="block text-sm font-medium text-gray-700">Prix de Vente (Fc)</label>
+          <div class="mt-1 relative rounded-md shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span class="text-gray-500 sm:text-sm">€</span>
+            </div>
+            <input 
+              type="number" 
+              id="prixVente" 
+              name="price" 
+              value="{{ product.price }}"
+              step="0.01"
+              min="0"
+              class="block w-full pl-7 pr-12 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 p-2 border"
+              required
+            >
+          </div>
+        </div>
+
+        <!-- Champ Date d'Expiration -->
+        <div>
+          <label for="dateExpiration" class="block text-sm font-medium text-gray-700">Date d'Expiration</label>
+          <input 
+            type="date" 
+            id="dateExpiration" 
+            name="expiration_date" 
+            value="{{ product.expirationDate }}"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+            required
+          >
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex justify-end space-x-4 pt-4">
+          <a 
+            {{--  href="{{ route('produits.index') }}"   --}}
+            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          >
+            Annuler
+          </a>
+          <button 
+            type="submit" 
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Petite animation pour les interactions -->
+  <script>
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      el.addEventListener('focus', () => {
+        el.parentElement.classList.add('ring-1', 'ring-blue-500')
+      })
+      el.addEventListener('blur', () => {
+        el.parentElement.classList.remove('ring-1', 'ring-blue-500')
+      })
+    })
+  </script>
+</body>
+</html>
