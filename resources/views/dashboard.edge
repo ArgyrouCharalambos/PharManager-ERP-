@@ -108,7 +108,7 @@
           @each(sale in saleS)
             {
               date: "{{ sale.date }}",
-              amount: {{ sale.amount }}
+              amount: {{ sale.amount }},
             },
           @endeach
         ];
@@ -116,9 +116,9 @@
         const labels = salesData.map(s => s.date);
         const data = salesData.map(s => s.amount);
       
-        const ctx = document.getElementById('salesChart').getContext('2d');
+        const ctx = document.getElementById('salesChart');
         new Chart(ctx, {
-          type: 'bar',
+          type: 'line',
           data: {
             labels: labels,
             datasets: [{
