@@ -20,6 +20,8 @@ router.group(() => {
   router.resource('products', ProductsController).except(['show','update'])
   router.get('products/alerts', [ProductsController , 'alerts'])
   router.post('products/update/:id', [ProductsController , 'update'])
+  router.get('sales/stat', [SalesController , 'stats'])
+
   
 
 // Sales

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Ventes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50">
+  <div class="container mx-auto px-4 py-8">
+    
+    <!-- Cartes de revenus -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div class="bg-white p-6 rounded-xl shadow-md">
+        <div class="text-gray-500 text-sm mb-1">Aujourd'hui</div>
+        <div class="text-2xl font-bold text-blue-600"> Fc</div>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-md">
+        <div class="text-gray-500 text-sm mb-1">Ce mois</div>
+        <div class="text-2xl font-bold text-green-600"> Fc</div>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-md">
+        <div class="text-gray-500 text-sm mb-1">Cette année</div>
+        <div class="text-2xl font-bold text-purple-600">Fc</div>
+      </div>
+    </div>
+
+    <!-- Grille des graphiques -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Produits populaires -->
+      <div class="bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-lg font-semibold mb-4">Top Produits</h2>
+        <canvas id="topProductsChart" class="w-full h-64"></canvas>
+      </div>
+
+      <!-- Tendance mensuelle -->
+      <div class="bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-lg font-semibold mb-4">Ventes Mensuelles</h2>
+        <canvas id="monthlyTrendsChart" class="w-full h-64"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration globale
+    const chartConfig = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.label}: ${ctx.raw.toLocaleString()} Fc`
+          }
+        }
+      }
+    }
+
+    // 1. Graphique des produits
+    new Chart(document.getElementById('topProductsChart'), {
+      type: 'doughnut',
+      data: {
+        labels: @json(topProducts.map(p => p.name)),
+        datasets: [{
+          label: 'Ventes',
+          data: @json(topProducts.map(p => p.total)),
+          backgroundColor: [
+            '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'
+          ]
+        }]
+      },
+      options: chartConfig
+    })
+
+    // 2. Tendance mensuelle
+    new Chart(document.getElementById('monthlyTrendsChart'), {
+      type: 'line',
+      data: {
+        labels: @json(monthlyTrends.map(m => m.month)),
+        datasets: [{
+          label: 'Montant (Fc)',
+          data: @json(monthlyTrends.map(m => m.total)),
+          borderColor: '#10B981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        ...chartConfig,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: value => `${value.toLocaleString()} Fc`
+            }
+          }
+        }
+      }
+    })
+  </script>
+</body>
+</html>

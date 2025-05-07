@@ -37,4 +37,7 @@ export default class SalesController {
 
     return response.redirect("/sales")
   }
+  public async stats({}: HttpContext) {
+    
+  }
 }
